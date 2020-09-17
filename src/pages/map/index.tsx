@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import * as Location from 'expo-location';
 import { Data } from './data';
+import { FontAwesome } from '@expo/vector-icons';
 
 const { height, width } = Dimensions.get('window');
 
@@ -32,7 +33,6 @@ class MapIndex extends Component {
         this.state = {
             latitude: 0,
             longitude: 0,
-            distance: 0,
             status: '',
             width: '99%',
             region: {
@@ -129,7 +129,6 @@ class MapIndex extends Component {
                             }}
                             onDragEnd={(e) => this.setState({ region: e.nativeEvent.coordinate })}
                             title={'Minha localização'}
-                            //onPress={() => this.openWhatsapp('5581998735119')}
                         />
                     </MapView>
                     <View style={styles.mapDrawerOverlay} />
@@ -138,9 +137,7 @@ class MapIndex extends Component {
                             style={styles.button}
                             onPress={() => this.props.navigation.openDrawer()}
                         >   
-                            <Text>
-                                Menu
-                            </Text>    
+                            <FontAwesome name='bars' color={'red'} size={30} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -158,9 +155,7 @@ class MapIndex extends Component {
                             style={styles.button}
                             
                         >   
-                            <Text>
-                                {this.state.distance}
-                            </Text>    
+                            <FontAwesome name='filter' color={'red'} size={30} />
                         </TouchableOpacity>
                     </View>
                 </View>

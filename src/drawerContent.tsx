@@ -1,9 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Avatar, Caption, Drawer, Paragraph, Switch, Text, Title, TouchableRipple } from 'react-native-paper';
-//import FontAewsome from 'react-native-vector-icons/FontAewsome';
-import FontAewsome from '@expo/vector-icons';
+import { Avatar, Caption, Drawer, Title } from 'react-native-paper';
 
 export function DrawerContent(props) {
     return (
