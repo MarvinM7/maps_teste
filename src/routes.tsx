@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import MapIndex from './pages/index';
-import Profile from './pages/profile';
+import { DrawerContent } from './drawerContent';
+import MapRoutes from './pages/map/routes';
+import ProfileRoutes from './pages/profile/routes';
 
 const Drawer = createDrawerNavigator();
 
@@ -11,9 +12,9 @@ class Routes extends Component {
     render() {
         return (
             <NavigationContainer>
-                <Drawer.Navigator initialRouteName="Map">
-                    <Drawer.Screen name="Map" component={MapIndex} />
-                    <Drawer.Screen name="Profile" component={Profile} />
+                <Drawer.Navigator initialRouteName="Mapa" drawerContent={props => <DrawerContent { ...props} />}>
+                    <Drawer.Screen name="Mapa" component={MapRoutes} />
+                    <Drawer.Screen name="Perfil" component={ProfileRoutes} />
                 </Drawer.Navigator>
             </NavigationContainer>  
         );

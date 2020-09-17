@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Linking, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { TouchableOpacity, Linking, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import * as Location from 'expo-location';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Data } from './data';
 
 const { height, width } = Dimensions.get('window');
+
+const screenH = Dimensions.get('screen').height;
 
 export const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
@@ -32,64 +34,14 @@ class MapIndex extends Component {
             longitude: 0,
             distance: 0,
             status: '',
+            width: '99%',
             region: {
                 latitude: -8.077025870042284,
                 longitude: -34.99885629862547,
                 latitudeDelta: 0.0111,
                 longitudeDelta: 0.0111,
             },
-            places: [
-                {
-                    id: 1,
-                    name: 'Vou Ali',
-                    description: 'Descrição',
-                    type: 'food',
-                    latitude: -8.077025870042284,
-                    longitude: -34.99885629862547,
-                    whatsapp: '5581998735119',
-                    instagram: 'marvinm7'
-                },
-                {
-                    id: 2,
-                    name: 'Kazoku Temakeria',
-                    description: 'Descrição',
-                    type: 'food',
-                    latitude: -8.077229687421696,
-                    longitude: -34.999230802059174,
-                    whatsapp: '5581998735119',
-                    instagram: 'marvinm7'
-                },
-                {
-                    id: 3,
-                    name: 'Mendonça Refeições',
-                    description: 'Descrição',
-                    type: 'food',
-                    latitude: -8.03783791263091,
-                    longitude: -34.95871804654598,
-                    whatsapp: '5581998735119',
-                    instagram: 'marvinm7'
-                },
-                {
-                    id: 4,
-                    name: 'Sorveteria Coltelli',
-                    description: 'Descrição',
-                    type: 'food',
-                    latitude: -8.03974514677866,
-                    longitude: -34.95786979794502,
-                    whatsapp: '5581998735119',
-                    instagram: 'marvinm7'
-                },
-                {
-                    id: 5,
-                    name: 'Turim Pizza',
-                    description: 'Descrição',
-                    type: 'food',
-                    latitude: -8.038322938561983,
-                    longitude: -34.957346096634865,
-                    whatsapp: '5581991086040',
-                    instagram: 'marvinm7'
-                }
-            ]
+            places: Data
         }
 
         this.getLocationAsync();
@@ -133,18 +85,6 @@ class MapIndex extends Component {
         }
     };
 
-    /*teste = () => {
-        let distance = getDistance(
-            { latitude: 20.0504188, longitude: 64.4139099 },
-            { latitude: 51.528308, longitude: -0.3817765 }
-        );
-        
-        console.log(distance);
-        this.setState({
-            distance 
-        })
-    }*/    
-
     render() {
         const { latitude, longitude} = this.state;
 
@@ -154,7 +94,8 @@ class MapIndex extends Component {
                     <MapView
                         ref={map => this.mapView = map}
                         provider={PROVIDER_GOOGLE}
-                        style={styles.mapView}
+                        style={[styles.mapView, {width: this.state.width }]}
+                        onMapReady={() => this.setState({ width: '100%' })}
                         region={this.state.region}
                         showsUserLocation={true}
                         showsMyLocationButton={true}
@@ -191,6 +132,17 @@ class MapIndex extends Component {
                             //onPress={() => this.openWhatsapp('5581998735119')}
                         />
                     </MapView>
+                    <View style={styles.mapDrawerOverlay} />
+                    <View style={{position: 'absolute', height: 40, width: 100, top: 25, left: 25, backgroundColor: '#FF0'}}>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => this.props.navigation.openDrawer()}
+                        >   
+                            <Text>
+                                Menu
+                            </Text>    
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 
                 <View style={styles.viewBottomBar}>
@@ -212,7 +164,6 @@ class MapIndex extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-
 
                 <ScrollView
                     style={styles.placesContainer}
@@ -310,7 +261,16 @@ const styles = StyleSheet.create({
 
     mapView: {
         ...StyleSheet.absoluteFillObject,
-        left: 3
+        top: 20
+    },
+
+    mapDrawerOverlay: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.0,
+        height: Dimensions.get('window').height,
+        width: 5,
     },
       
     place: {

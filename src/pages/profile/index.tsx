@@ -1,27 +1,56 @@
-//import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { color } from 'react-native-reanimated';
 
-// create a component
-class Profile extends Component {
+class ProfileIndex extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            
+        }
+    }    
+
     render() {
         return (
             <View style={styles.container}>
-                <Text>Profile</Text>
+                <View style={{position: 'absolute', height: 40, width: 100, top: 25, left: 25, backgroundColor: '#FF0'}}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => this.props.navigation.openDrawer()}
+                    >   
+                        <Text>
+                            Menu
+                        </Text>    
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <Text style={{color: '#FF0'}}>
+                        Tela de Perfil
+                    </Text>
+                </View>
             </View>
         );
     }
 }
 
-// define your styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: '#FF0000',
+    },
+
+    button: {
+        width: '100%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+        borderColor: 'gray',
+        borderWidth: 1,
+        backgroundColor: '#00FF00'
     },
 });
 
-//make this component available to the app
-export default Profile;
+export default ProfileIndex;
