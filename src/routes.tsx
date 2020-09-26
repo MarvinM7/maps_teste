@@ -5,6 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DrawerContent } from './drawerContent';
 import MapRoutes from './pages/map/routes';
 import ProfileRoutes from './pages/profile/routes';
+import SettingsRoutes from './pages/settings/routes';
 
 const Drawer = createDrawerNavigator();
 
@@ -15,6 +16,7 @@ class Routes extends Component {
                 <Drawer.Navigator initialRouteName="Mapa" drawerContent={props => <DrawerContent { ...props} />}>
                     <Drawer.Screen name="Mapa" component={MapRoutes} />
                     <Drawer.Screen name="Perfil" component={ProfileRoutes} />
+                    <Drawer.Screen name="Configuracoes" component={SettingsRoutes} />
                 </Drawer.Navigator>
             </NavigationContainer>  
         );

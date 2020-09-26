@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { color } from 'react-native-reanimated';
+import { FontAwesome } from '@expo/vector-icons';
 
 class ProfileIndex extends Component {
     constructor(props) {
@@ -19,9 +19,7 @@ class ProfileIndex extends Component {
                         style={styles.button}
                         onPress={() => this.props.navigation.openDrawer()}
                     >   
-                        <Text>
-                            Menu
-                        </Text>    
+                        <FontAwesome name='bars' color={'red'} size={30} />  
                     </TouchableOpacity>
                 </View>
                 <View>

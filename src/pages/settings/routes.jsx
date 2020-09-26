@@ -8,8 +8,8 @@ const Stack = createStackNavigator();
 class SettingsRoute extends Component {
     render() {
         return (
-            <Stack.Navigator>
-                <Stack.Screen name="SettingsIndex" component={SettingsIndex} />
+            <Stack.Navigator initialRouteName="Configuracoes" headerMode="none">
+                <Stack.Screen name="Configuracoes" component={SettingsIndex} />
             </Stack.Navigator>
         );
     }

@@ -54,6 +54,7 @@ export function DrawerContent(props) {
                         <Drawer.Item 
                             icon='settings'
                             label='Configurações'
+                            onPress={() => props.navigation.navigate('Configuracoes')}
                         />
                     </Drawer.Section>
                 </View>

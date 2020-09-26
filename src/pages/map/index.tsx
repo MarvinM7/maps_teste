@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Linking, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableHighlight, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import * as Location from 'expo-location';
@@ -41,23 +41,23 @@ class MapIndex extends Component {
                 latitudeDelta: 0.0111,
                 longitudeDelta: 0.0111,
             },
-            places: Data
+            places: Data,
+            modalVisible: false
         }
 
         this.getLocationAsync();
-        //this.teste();
     }
 
     openDialler(number) {
-        Linking.openURL('tel:${81998735119}');
+        Linking.openURL('tel:${'+ number + '}');
     }
 
-    openWhatsapp(number) {
-        Linking.openURL('whatsapp://send?text=hello&phone=' + number);
+    openWhatsapp(whatsapp) {
+        Linking.openURL('whatsapp://send?text=hello&phone=' + whatsapp);
     }
 
-    openInstagram(profile) {
-        Linking.openURL('instagram://user?username=marvinm7');
+    openInstagram(instagram) {
+        Linking.openURL('instagram://user?username=' + instagram);
     }
 
     getLocationAsync = async () => {
@@ -90,6 +90,25 @@ class MapIndex extends Component {
 
         return (
             <View style={styles.container}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Hello World!</Text>
+
+                            <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                            onPress={() => this.setState({ modalVisible: false})}
+                            >
+                            <Text style={styles.textStyle}>Hide Modal</Text>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
+                </Modal>
+
                 <View style={styles.viewMapView}>
                     <MapView
                         ref={map => this.mapView = map}
@@ -147,58 +166,30 @@ class MapIndex extends Component {
                         <TextInput
                             style={styles.searchBar}
                             onChangeText={() => console.log('yrdyr')}
-                            placeholder={'Procurar2'}
+                            placeholder={'Procurar'}
                         />
                     </View>
                     <View style={styles.viewButton}>
-                        <TouchableOpacity
-                            style={styles.button}
-                            
-                        >   
-                            <FontAwesome name='filter' color={'red'} size={30} />
-                        </TouchableOpacity>
+                        <View style={styles.viewFilter}>
+                            <TouchableOpacity
+                                style={styles.buttonFilter}
+                                onPress={() => this.setState({ modalVisible: true })}
+                            >   
+                                <FontAwesome name='filter' color={'blue'} size={30} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.viewProfile}>
+                            <TouchableOpacity
+                                style={styles.buttonProfile}
+                                onPress={() => this.setState({ modalVisible: true })}
+                            >   
+                                <FontAwesome name='heart' color={'red'} size={30} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
 
-                <ScrollView
-                    style={styles.placesContainer}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    pagingEnabled
-                    onMomentumScrollEnd={async e => {
-                        const place = Math.round(e.nativeEvent.contentOffset.x / width);
-                        
-                        const { latitude, longitude, mark } = this.state.places[place];
-                        this.mapView.animateCamera(
-                            {
-                                center: {
-                                    latitude,
-                                    longitude
-                                },
-                            },
-                            {duration: 1000}
-                        );
-
-                        setTimeout(() => {
-                            mark.showCallout();
-                        }, 1000)
-                    }}
-                >
-                    {/*this.state.places.map((box) => (
-                        <View
-                            key={box.id}
-                            style={styles.place}
-                        >
-                            <Text>{box.name}</Text>
-                            <Text>{box.description}</Text>
-                            <View>
-                                <FontAwesome name={'phone'} size={50} color={'green'} onPress={()=> this.openDialler(box.whatsapp)} />
-                                <FontAwesome name={'whatsapp'} size={50} color={'green'} onPress={()=> this.openWhatsapp(box.whatsapp)} />
-                                <FontAwesome name={'instagram'} size={50} color={'green'} onPress={()=> this.openInstagram(box.instagram)} />
-                            </View>
-                        </View>
-                    ))*/}
-                </ScrollView>
+                
             </View>
         );
     }
@@ -207,8 +198,41 @@ class MapIndex extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    button: {
+        width: '100%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+        borderColor: 'gray',
+        borderWidth: 1,
+        backgroundColor: '#00FF00'
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: '#00FF00',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+    },
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
     },
 
     viewBottomBar: {
@@ -220,8 +244,9 @@ const styles = StyleSheet.create({
     },
 
     viewSearchBar: {
-        width: '70%',
-        height: 70
+        width: '60%',
+        height: 40,
+        borderWidth: 1
     },
 
     searchBar: {
@@ -230,23 +255,54 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         padding: 10,
         borderWidth: 1,
-        width: '100%'
+        width: '100%',
+        borderRadius: 40
     },
 
     viewButton: {
-        width: '30%',
-        height: 70,
-        paddingLeft: 15
+        width: '40%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+        //backgroundColor: 'blue',
+        flexDirection: 'row',
+        borderWidth: 1
     },
 
-    button: {
-        width: '100%',
+    viewFilter: {
+        width: '50%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+    },
+
+    viewProfile: {
+        width: '50%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+    },
+
+    buttonFilter: {
+        width: '80%',
         height: 40,
         alignItems: "center",
         justifyContent: 'center',
         borderColor: 'gray',
         borderWidth: 1,
-        backgroundColor: '#00FF00'
+        backgroundColor: '#00FF00',
+        borderRadius: 40
+    },
+
+    buttonProfile: {
+        width: '80%',
+        height: 40,
+        alignItems: "center",
+        justifyContent: 'center',
+        borderColor: 'gray',
+        borderWidth: 1,
+        backgroundColor: '#00FF00',
+        borderRadius: 40
     },
 
     viewMapView: {
@@ -277,3 +333,46 @@ const styles = StyleSheet.create({
 });
 
 export default MapIndex;
+
+/*
+
+<ScrollView
+                    style={styles.placesContainer}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    pagingEnabled
+                    onMomentumScrollEnd={async e => {
+                        const place = Math.round(e.nativeEvent.contentOffset.x / width);
+                        
+                        const { latitude, longitude, mark } = this.state.places[place];
+                        this.mapView.animateCamera(
+                            {
+                                center: {
+                                    latitude,
+                                    longitude
+                                },
+                            },
+                            {duration: 1000}
+                        );
+
+                        setTimeout(() => {
+                            mark.showCallout();
+                        }, 1000)
+                    }}
+                >
+                    {this.state.places.map((box) => (
+                        <View
+                            key={box.id}
+                            style={styles.place}
+                        >
+                            <Text>{box.name}</Text>
+                            <Text>{box.description}</Text>
+                            <View>
+                                <FontAwesome name={'phone'} size={50} color={'green'} onPress={()=> this.openDialler(box.whatsapp)} />
+                                <FontAwesome name={'whatsapp'} size={50} color={'green'} onPress={()=> this.openWhatsapp(box.whatsapp)} />
+                                <FontAwesome name={'instagram'} size={50} color={'green'} onPress={()=> this.openInstagram(box.instagram)} />
+                            </View>
+                        </View>
+                    ))}
+                    </ScrollView>
+                    */
