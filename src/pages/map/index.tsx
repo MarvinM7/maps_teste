@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Linking, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableHighlight, View } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import * as Location from 'expo-location';
@@ -14,16 +15,6 @@ export const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(position => resolve(position), e => reject(e));
     });
-};
-
-export const Teste = (props) => {
-    return (
-        <Text
-            onPress={() => true ? this.openWhatsapp(props.contact) : this.openInstagram()}
-        >
-            {props.contact}
-        </Text>
-    );
 };
   
 class MapIndex extends Component {
@@ -41,8 +32,50 @@ class MapIndex extends Component {
                 latitudeDelta: 0.0111,
                 longitudeDelta: 0.0111,
             },
-            places: Data,
-            modalVisible: false
+            places: Data.places,
+            typePlaces: Data.typePlaces,
+            modalVisible: false,
+            customMapStyle: [
+                {
+                    "featureType": "administrative",
+                    "elementType": "geometry",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                }
+            ],
+            filter: {
+                type: [
+
+                ]
+            }
         }
 
         this.getLocationAsync();
@@ -58,6 +91,12 @@ class MapIndex extends Component {
 
     openInstagram(instagram) {
         Linking.openURL('instagram://user?username=' + instagram);
+    }
+
+    onChangeText(input) {
+        this.setState({
+            input
+        })
     }
 
     getLocationAsync = async () => {
@@ -85,9 +124,50 @@ class MapIndex extends Component {
         }
     };
 
+    filterType = () => {
+        let places = [];
+        let checekd = false;
+        this.state.typePlaces.map((type) => {
+            if (type.checked) {
+                Data.places.map((place) => {
+                    if (type.id === place.typeId) {
+                        places.push(place);
+                    }
+                })
+                checekd = true; 
+            }
+        });
+
+        if (!checekd) {
+            places = Data.places;
+        }
+
+        this.setState({
+            places,
+            modalVisible: false
+        })
+    }
+
+    setToggleCheckBox = (typeId) => {
+        let typePlaces = [];
+
+        this.state.typePlaces.map((type) => {
+            typePlaces.push(type);
+        });
+
+        for (let i = 0; i < typePlaces.length; i++) {
+            if (typeId === typePlaces[i].id) {
+                typePlaces[i].checked = !typePlaces[i].checked;
+            }
+        }
+
+        this.setState({
+            typePlaces
+        });
+    }
+
     render() {
         const { latitude, longitude} = this.state;
-
         return (
             <View style={styles.container}>
                 <Modal
@@ -95,101 +175,103 @@ class MapIndex extends Component {
                     transparent={true}
                     visible={this.state.modalVisible}
                 >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
+                    <View style={styles.viewCentered}>
+                        <View style={styles.viewModal}>
+                            {this.state.typePlaces.map((type) => (
+                                <View key={type.id} style={styles.viewTypePlaces}>
+                                    <View style={{width: '90%', justifyContent: "flex-start"}}>
+                                        <Text style={styles.modalText}>{type.name}</Text>
+                                    </View>
+                                    <View style={{width: '10%', justifyContent: "flex-end"}}>
+                                        <CheckBox
+                                            disabled={false}
+                                            value={type.checked}
+                                            onValueChange={() => this.setToggleCheckBox(type.id)}
+                                        />
+                                    </View>
+                                </View>
+                            ))}
 
                             <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                            onPress={() => this.setState({ modalVisible: false})}
+                                style={styles.buttonFilterModal}
+                                onPress={() => this.filterType()}
                             >
-                            <Text style={styles.textStyle}>Hide Modal</Text>
+                                <View style={{width: '100%', height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 40, alignItems: 'center', justifyContent: "center"}}>
+                                    <Text>
+                                        Filtrar
+                                    </Text>
+                                </View>
                             </TouchableHighlight>
                         </View>
                     </View>
                 </Modal>
 
-                <View style={styles.viewMapView}>
-                    <MapView
-                        ref={map => this.mapView = map}
-                        provider={PROVIDER_GOOGLE}
-                        style={[styles.mapView, {width: this.state.width }]}
-                        onMapReady={() => this.setState({ width: '100%' })}
-                        region={this.state.region}
-                        showsUserLocation={true}
-                        showsMyLocationButton={true}
-                        showsCompass={true}
-                        showsPointsOfInterest={false}
-                        showsBuildings={false}
-                        zoomEnabled={true}
-                        toolbarEnabled={true}
-                        loadingEnabled={true}
-                        rotateEnabled={false}
-                    >
-                        {this.state.places.map((marker) => (
-                            <Marker 
-                                ref={mark => marker.mark = mark}
-                                key={marker.id}
-                                draggable
-                                coordinate={{
-                                    latitude: marker.latitude,
-                                    longitude: marker.longitude
-                                }}    
-                                title={marker.name}
-                                description={marker.description}
-                                contact={marker.number}
-                            />
-                        ))}
+                
+                <MapView
+                    ref={map => this.mapView = map}
+                    provider={PROVIDER_GOOGLE}
+                    style={[styles.mapView, {width: this.state.width }]}
+                    onMapReady={() => this.setState({ width: '100%' })}
+                    initialRegion={this.state.region}
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
+                    showsCompass={true}
+                    showsPointsOfInterest={false}
+                    showsBuildings={false}
+                    zoomEnabled={true}
+                    toolbarEnabled={true}
+                    loadingEnabled={true}
+                    rotateEnabled={false}
+                    customMapStyle={this.state.customMapStyle}
+                >
+                    {this.state.places.map((marker) => (
                         <Marker 
+                            ref={mark => marker.mark = mark}
+                            key={marker.id}
                             draggable
                             coordinate={{
-                                latitude,
-                                longitude
-                            }}
-                            onDragEnd={(e) => this.setState({ region: e.nativeEvent.coordinate })}
-                            title={'Minha localização'}
+                                latitude: marker.latitude,
+                                longitude: marker.longitude
+                            }}    
+                            title={marker.name}
+                            description={marker.description}
+                            contact={marker.number}
                         />
-                    </MapView>
-                    <View style={styles.mapDrawerOverlay} />
-                    <View style={{position: 'absolute', height: 40, width: 100, top: 25, left: 25, backgroundColor: '#FF0'}}>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => this.props.navigation.openDrawer()}
-                        >   
-                            <FontAwesome name='bars' color={'red'} size={30} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                
-                <View style={styles.viewBottomBar}>
-                    <View style={styles.viewSearchBar}>
-                        <TextInput
-                            style={styles.searchBar}
-                            onChangeText={() => console.log('yrdyr')}
-                            placeholder={'Procurar'}
-                        />
-                    </View>
-                    <View style={styles.viewButton}>
-                        <View style={styles.viewFilter}>
-                            <TouchableOpacity
-                                style={styles.buttonFilter}
-                                onPress={() => this.setState({ modalVisible: true })}
-                            >   
-                                <FontAwesome name='filter' color={'blue'} size={30} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.viewProfile}>
-                            <TouchableOpacity
-                                style={styles.buttonProfile}
-                                onPress={() => this.setState({ modalVisible: true })}
-                            >   
-                                <FontAwesome name='heart' color={'red'} size={30} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-
-                
+                    ))}
+                    {/*<Marker 
+                        draggable
+                        coordinate={{
+                            latitude,
+                            longitude
+                        }}
+                        onDragEnd={(e) => this.setState({ region: e.nativeEvent.coordinate })}
+                        title={'Minha localização'}
+                    />*/}
+                </MapView>
+                <View style={styles.viewMapDrawerOverlay} />
+                <TouchableOpacity
+                    style={styles.buttonMenu}
+                    onPress={() => this.props.navigation.openDrawer()}
+                >   
+                    <FontAwesome name='bars' color={'green'} size={30} />
+                </TouchableOpacity>
+                <TextInput
+                    style={styles.searchBar}
+                    onChangeText={input => this.onChangeText(input)}
+                    placeholder={'Procurar'}
+                />
+                <TouchableOpacity
+                    style={styles.buttonFilter}
+                    onPress={() => this.setState({ modalVisible: true })}
+                >   
+                    <FontAwesome name='filter' color={'green'} size={30} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.buttonProfile}
+                    onPress={() => this.setState({ modalVisible: true })}
+                >   
+                    <FontAwesome name='user' color={'green'} size={30} />
+                </TouchableOpacity>
             </View>
         );
     }
@@ -198,24 +280,26 @@ class MapIndex extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "flex-end",
+        alignItems: "center",
+    },
+
+    viewCentered: {
+        flex: 1,
         justifyContent: "center",
         alignItems: "center",
     },
 
-    button: {
-        width: '100%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-        borderColor: 'gray',
+    viewModal: {
+        width: '80%',
+        backgroundColor: '#FFF',
+        borderRadius: 40,
         borderWidth: 1,
-        backgroundColor: '#00FF00'
-    },
-
-    modalView: {
-        margin: 20,
-        backgroundColor: '#00FF00',
-        borderRadius: 20,
+        borderColor: 'green',
         padding: 35,
         alignItems: "center",
         shadowColor: "#000",
@@ -228,94 +312,27 @@ const styles = StyleSheet.create({
         elevation: 5
     },
 
-    centeredView: {
-        flex: 1,
+    viewTypePlaces: {
+        width: '100%',
+        height: 30,
+        flexDirection: 'row',
+        alignItems: "center",
+    },
+
+    buttonFilterModal: {
+        width: '80%',
+        height: 40,
+        borderRadius: 40,
+        backgroundColor: '#FFF',
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 22
-    },
-
-    viewBottomBar: {
-        flexDirection: 'row',
-        width: '100%',
-        height: 70,
-        backgroundColor: '#FF0',
-        padding: 15
-    },
-
-    viewSearchBar: {
-        width: '60%',
-        height: 40,
-        borderWidth: 1
-    },
-
-    searchBar: {
-        height: 40,
-        backgroundColor: '#FF0000',
-        borderColor: 'gray',
-        padding: 10,
-        borderWidth: 1,
-        width: '100%',
-        borderRadius: 40
-    },
-
-    viewButton: {
-        width: '40%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-        //backgroundColor: 'blue',
-        flexDirection: 'row',
-        borderWidth: 1
-    },
-
-    viewFilter: {
-        width: '50%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-    },
-
-    viewProfile: {
-        width: '50%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-    },
-
-    buttonFilter: {
-        width: '80%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-        borderColor: 'gray',
-        borderWidth: 1,
-        backgroundColor: '#00FF00',
-        borderRadius: 40
-    },
-
-    buttonProfile: {
-        width: '80%',
-        height: 40,
-        alignItems: "center",
-        justifyContent: 'center',
-        borderColor: 'gray',
-        borderWidth: 1,
-        backgroundColor: '#00FF00',
-        borderRadius: 40
-    },
-
-    viewMapView: {
-        width: '100%',
-        height: height - 70
     },
 
     mapView: {
-        ...StyleSheet.absoluteFillObject,
-        top: 20
+        height: height - 20
     },
 
-    mapDrawerOverlay: {
+    viewMapDrawerOverlay: {
         position: 'absolute',
         left: 0,
         top: 0,
@@ -323,56 +340,55 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
         width: 5,
     },
-      
-    place: {
-        width: width - 40,
-        maxHeight: 200,
+
+    buttonMenu: {
+        position: 'absolute',
+        width: 70,
+        height: 40,
+        top: 25,
+        left: 25
+    },
+
+    searchBar: {
+        width: '60%',
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 40,
+        borderColor: 'green',
+        position: 'absolute',
+        bottom: 12,
+        left: 25,
         backgroundColor: '#FFF',
-        marginHorizontal: 20
+        padding: 10
+    },
+
+    buttonFilter: {
+        width: '10%',
+        height: 40,
+        borderRadius: 40,
+        borderColor: 'green',
+        borderWidth: 1,
+        position: 'absolute',
+        bottom: 12,
+        left: '70%',
+        backgroundColor: '#FFF',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    buttonProfile: {
+        width: '10%',
+        height: 40,
+        borderRadius: 40,
+        borderColor: 'green',
+        borderWidth: 1,
+        position: 'absolute',
+        bottom: 12,
+        right: 25,
+        backgroundColor: '#FFF',
+        justifyContent: "center",
+        alignItems: "center",
     }
 });
 
 export default MapIndex;
-
-/*
-
-<ScrollView
-                    style={styles.placesContainer}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    pagingEnabled
-                    onMomentumScrollEnd={async e => {
-                        const place = Math.round(e.nativeEvent.contentOffset.x / width);
-                        
-                        const { latitude, longitude, mark } = this.state.places[place];
-                        this.mapView.animateCamera(
-                            {
-                                center: {
-                                    latitude,
-                                    longitude
-                                },
-                            },
-                            {duration: 1000}
-                        );
-
-                        setTimeout(() => {
-                            mark.showCallout();
-                        }, 1000)
-                    }}
-                >
-                    {this.state.places.map((box) => (
-                        <View
-                            key={box.id}
-                            style={styles.place}
-                        >
-                            <Text>{box.name}</Text>
-                            <Text>{box.description}</Text>
-                            <View>
-                                <FontAwesome name={'phone'} size={50} color={'green'} onPress={()=> this.openDialler(box.whatsapp)} />
-                                <FontAwesome name={'whatsapp'} size={50} color={'green'} onPress={()=> this.openWhatsapp(box.whatsapp)} />
-                                <FontAwesome name={'instagram'} size={50} color={'green'} onPress={()=> this.openInstagram(box.instagram)} />
-                            </View>
-                        </View>
-                    ))}
-                    </ScrollView>
-                    */
