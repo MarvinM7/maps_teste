@@ -37,7 +37,7 @@ export const Data = {
             typeId: 1,
             latitude: -8.03974514677866,
             longitude: -34.95786979794502,
-            whatsapp: '5581998735119',
+            whatsapp: '5581988360455',
             instagram: 'marvinm7'
         },
         {

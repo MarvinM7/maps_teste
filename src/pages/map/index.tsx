@@ -249,12 +249,6 @@ class MapIndex extends Component {
                     />*/}
                 </MapView>
                 <View style={styles.viewMapDrawerOverlay} />
-                <TouchableOpacity
-                    style={styles.buttonMenu}
-                    onPress={() => this.props.navigation.openDrawer()}
-                >   
-                    <FontAwesome name='bars' color={'green'} size={30} />
-                </TouchableOpacity>
                 <TextInput
                     style={styles.searchBar}
                     onChangeText={input => this.onChangeText(input)}
@@ -265,12 +259,6 @@ class MapIndex extends Component {
                     onPress={() => this.setState({ modalVisible: true })}
                 >   
                     <FontAwesome name='filter' color={'green'} size={30} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.buttonProfile}
-                    onPress={() => this.setState({ modalVisible: true })}
-                >   
-                    <FontAwesome name='user' color={'green'} size={30} />
                 </TouchableOpacity>
             </View>
         );
@@ -329,7 +317,7 @@ const styles = StyleSheet.create({
     },
 
     mapView: {
-        height: height - 20
+        height: height - 70
     },
 
     viewMapDrawerOverlay: {
@@ -341,22 +329,15 @@ const styles = StyleSheet.create({
         width: 5,
     },
 
-    buttonMenu: {
-        position: 'absolute',
-        width: 70,
-        height: 40,
-        top: 25,
-        left: 25
-    },
-
     searchBar: {
         width: '60%',
         height: 40,
+        position: 'absolute',
         borderWidth: 1,
         borderRadius: 40,
         borderColor: 'green',
         position: 'absolute',
-        bottom: 12,
+        top: 30,
         left: 25,
         backgroundColor: '#FFF',
         padding: 10
@@ -369,7 +350,7 @@ const styles = StyleSheet.create({
         borderColor: 'green',
         borderWidth: 1,
         position: 'absolute',
-        bottom: 12,
+        top: 30,
         left: '70%',
         backgroundColor: '#FFF',
         justifyContent: "center",
