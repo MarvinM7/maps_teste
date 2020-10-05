@@ -196,7 +196,7 @@ class MapIndex extends Component {
                                 style={styles.buttonFilterModal}
                                 onPress={() => this.filterType()}
                             >
-                                <View style={{width: '100%', height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 40, alignItems: 'center', justifyContent: "center"}}>
+                                <View style={{width: '100%', height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 5, alignItems: 'center', justifyContent: "center"}}>
                                     <Text>
                                         Filtrar
                                     </Text>
@@ -209,7 +209,7 @@ class MapIndex extends Component {
                 
                 <MapView
                     ref={map => this.mapView = map}
-                    provider={PROVIDER_GOOGLE}
+                    //provider={PROVIDER_GOOGLE}
                     style={[styles.mapView, {width: this.state.width }]}
                     onMapReady={() => this.setState({ width: '100%' })}
                     initialRegion={this.state.region}
@@ -236,6 +236,7 @@ class MapIndex extends Component {
                             title={marker.name}
                             description={marker.description}
                             contact={marker.number}
+                            onCalloutPress={() => console.log('teste')}
                         />
                     ))}
                     {/*<Marker 
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
     viewModal: {
         width: '80%',
         backgroundColor: '#FFF',
-        borderRadius: 40,
+        borderRadius: 5,
         borderWidth: 1,
         borderColor: 'green',
         padding: 35,
@@ -310,7 +311,7 @@ const styles = StyleSheet.create({
     buttonFilterModal: {
         width: '80%',
         height: 40,
-        borderRadius: 40,
+        borderRadius: 5,
         backgroundColor: '#FFF',
         justifyContent: "center",
         alignItems: "center",
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
         height: 40,
         position: 'absolute',
         borderWidth: 1,
-        borderRadius: 40,
+        borderRadius: 5,
         borderColor: 'green',
         position: 'absolute',
         top: 30,
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
     buttonFilter: {
         width: '10%',
         height: 40,
-        borderRadius: 40,
+        borderRadius: 5,
         borderColor: 'green',
         borderWidth: 1,
         position: 'absolute',
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
     buttonProfile: {
         width: '10%',
         height: 40,
-        borderRadius: 40,
+        borderRadius: 5,
         borderColor: 'green',
         borderWidth: 1,
         position: 'absolute',

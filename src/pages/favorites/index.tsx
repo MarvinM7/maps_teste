@@ -2,22 +2,13 @@
 import React, { Component } from 'react';
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import openDialler from '../../functions/openDialler';
+import openWhatsapp from '../../functions/openWhatsapp';
+import openInstagram from '../../functions/openInstagram';
 
 class FavoritesIndex extends Component {
     constructor(props) {
         super(props)
-    }
-
-    openDialler(number) {
-        Linking.openURL('tel:${'+ number + '}');
-    }
-
-    openWhatsapp(whatsapp) {
-        Linking.openURL('whatsapp://send?text=hello&phone=5581988360455' + whatsapp);
-    }
-
-    openInstagram(instagram) {
-        Linking.openURL('instagram://user?username=' + instagram);
     }
 
     render() {
@@ -39,10 +30,10 @@ class FavoritesIndex extends Component {
                             </View>
                         </View>
                         <View style={styles.viewItemContact}>
-                            <FontAwesome style={{marginRight: 15}} name={'phone'} size={30} color={'green'} onPress={()=> this.openWhatsapp('')} />
-                            <FontAwesome style={{marginRight: 15}} name={'whatsapp'} size={30} color={'green'} onPress={()=> this.openWhatsapp('')} />
-                            <FontAwesome style={{marginRight: 15}} name={'instagram'} size={30} color={'green'} onPress={()=> this.openWhatsapp('')} />
-                            <FontAwesome style={{marginRight: 15}} name={'facebook'} size={30} color={'green'} onPress={()=> this.openWhatsapp('')} />
+                            <FontAwesome style={{marginRight: 15}} name={'phone'} size={30} color={'green'} onPress={()=> openDialler('81988360455')} />
+                            <FontAwesome style={{marginRight: 15}} name={'whatsapp'} size={30} color={'green'} onPress={()=> openWhatsapp('5581988360455')} />
+                            <FontAwesome style={{marginRight: 15}} name={'instagram'} size={30} color={'green'} onPress={()=> openInstagram('marvinm7')} />
+                            <FontAwesome style={{marginRight: 15}} name={'facebook'} size={30} color={'green'} onPress={()=> openWhatsapp('')} />
                         </View>
                         <Text style={styles.itemStreet}>Rua Delfim Fernandes Amorim, 115-B</Text>
                         <Text style={styles.itemDistrict}>Curado II</Text>
